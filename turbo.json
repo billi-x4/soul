@@ -1,0 +1,39 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "stream",
+  "tasks": {
+    "build": {
+      "env": [
+        "DATABASE_URL",
+        "ENOKI_SECRET_KEY",
+        "ENOKI_PUBLIC_KEY",
+        "SUI_NETWORK",
+        "MEMWAL_RELAYER_URL",
+        "MEMWAL_ACCOUNT_REGISTRY",
+        "NEXT_PUBLIC_ENOKI_PUBLIC_KEY",
+        "NEXT_PUBLIC_GOOGLE_CLIENT_ID",
+        "NEXT_PUBLIC_SUI_NETWORK",
+        "NEXT_PUBLIC_API_URL"
+      ],
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "format": {},
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:push": {},
+    "db:generate": {},
+    "db:migrate": {},
+    "db:studio": {},
+    "db:seed": {}
+  }
+}

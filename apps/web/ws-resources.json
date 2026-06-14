@@ -1,0 +1,12 @@
+{
+  "headers": {
+    "/*": {
+      "Cache-Control": "max-age=3600"
+    }
+  },
+  "routes": {
+    "/*": "/index.html"
+  },
+  "site_name": "Soul — Your Second Soul",
+  "object_id": "0xa37648ae6cd3a332b94711f11c91167c8360b342dae2d683c1deb57e605a7b6a"
+}

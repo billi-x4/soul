@@ -1,0 +1,493 @@
+@import "tailwindcss";
+
+@plugin "tailwindcss-animate";
+@plugin "@tailwindcss/typography";
+@plugin "tailwind-scrollbar";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================================
+   SOUL — "PULSE" design system
+   Void (black canvas) · Bone (white light) · Pulse (red, the single authority).
+   Dark-only: the void IS the brand. See apps/web/DESIGN.md.
+   All components consume semantic tokens (bg-background / text-primary / …).
+   ========================================================================= */
+
+:root {
+  /* --- the void --- */
+  --background: oklch(0.13 0.005 285);
+  --foreground: oklch(0.985 0.002 90);
+  --card: oklch(0.165 0.005 285);
+  --card-foreground: oklch(0.985 0.002 90);
+  --popover: oklch(0.175 0.005 285);
+  --popover-foreground: oklch(0.985 0.002 90);
+
+  --muted: oklch(0.205 0.006 285);
+  --muted-foreground: oklch(0.66 0.01 280);
+  --secondary: oklch(0.22 0.007 285);
+  --secondary-foreground: oklch(0.985 0.002 90);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 14%);
+
+  /* --- the pulse (brand red) --- */
+  --primary: oklch(0.55 0.225 27);
+  --primary-foreground: oklch(0.99 0.005 90);
+  --accent: oklch(0.235 0.045 25);
+  --accent-foreground: oklch(0.88 0.07 22);
+  --ring: oklch(0.62 0.245 26);
+
+  --pulse: oklch(0.62 0.245 26);
+  --pulse-soft: oklch(0.68 0.21 24);
+  --pulse-deep: oklch(0.47 0.19 27);
+  --gold: oklch(0.82 0.16 85);
+
+  /* namespace identity — bio is the one red; the rest stay neutral so red keeps authority */
+  --ns-bio: oklch(0.68 0.21 24);
+  --ns-docs: oklch(0.92 0.005 90);
+  --ns-social: oklch(0.76 0.04 260);
+
+  /* brand ramp (dark-theme convention: higher step = lighter) */
+  --brand-50: oklch(0.25 0.06 26);
+  --brand-100: oklch(0.32 0.1 26);
+  --brand-200: oklch(0.42 0.15 26);
+  --brand-300: oklch(0.5 0.19 26);
+  --brand-400: oklch(0.585 0.235 26);
+  --brand-500: oklch(0.62 0.245 26);
+  --brand-600: oklch(0.68 0.21 24);
+  --brand-700: oklch(0.75 0.16 22);
+  --brand-800: oklch(0.83 0.1 20);
+  --brand-900: oklch(0.91 0.05 18);
+
+  /* --- state --- */
+  --destructive: oklch(0.62 0.245 26);
+  --destructive-foreground: oklch(0.99 0.005 90);
+  --success: oklch(0.78 0.14 160);
+  --success-foreground: oklch(0.2 0.045 160);
+  --warning: oklch(0.82 0.16 85);
+  --warning-foreground: oklch(0.26 0.055 85);
+  --info: oklch(0.76 0.035 260);
+  --info-foreground: oklch(0.2 0.02 260);
+
+  /* --- data viz: pulse ramp + ash + gold, never rainbow --- */
+  --chart-1: oklch(0.62 0.245 26);
+  --chart-2: oklch(0.76 0.16 22);
+  --chart-3: oklch(0.82 0.16 85);
+  --chart-4: oklch(0.8 0.012 280);
+  --chart-5: oklch(0.47 0.19 27);
+
+  /* --- sidebar: one step deeper into the void --- */
+  --sidebar: oklch(0.115 0.004 285);
+  --sidebar-foreground: oklch(0.88 0.005 90);
+  --sidebar-primary: oklch(0.55 0.225 27);
+  --sidebar-primary-foreground: oklch(0.99 0.005 90);
+  --sidebar-accent: oklch(0.2 0.02 26);
+  --sidebar-accent-foreground: oklch(0.96 0.01 60);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-ring: oklch(0.62 0.245 26);
+
+  /* --- ledger (inverted bone surfaces for on-chain proof moments) --- */
+  --ledger: oklch(0.975 0.003 90);
+  --ledger-foreground: oklch(0.145 0.005 285);
+  --ledger-muted: oklch(0.45 0.012 285);
+  --ledger-border: oklch(0.145 0.005 285 / 14%);
+
+  /* --- shape --- */
+  --radius: 1rem;
+
+  /* --- elevation: the void has no shadows; the only bloom is the pulse --- */
+  --shadow-color: 0 0% 0%;
+  --shadow-xs: 0 0 0 0 transparent;
+  --shadow-sm: 0 0 0 0 transparent;
+  --shadow-md: 0 0 0 0 transparent;
+  --shadow-lg: 0 0 0 0 transparent;
+  --shadow-xl: 0 0 0 0 transparent;
+  --shadow-2xl: 0 0 0 0 transparent;
+  --shadow-glow:
+    0 0 0 1px oklch(0.62 0.245 26 / 0.4), 0 0 24px oklch(0.62 0.245 26 / 0.3), 0
+    8px 48px oklch(0.62 0.245 26 / 0.25);
+
+  /* --- motion --- */
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-fast: 120ms;
+  --dur: 200ms;
+  --dur-slow: 420ms;
+
+  /* --- rhythm --- */
+  --space-section: clamp(5rem, 10vw, 8.5rem);
+}
+
+/* Dark-only system: .dark mirrors :root so theme plumbing stays inert. */
+.dark {
+  --background: oklch(0.13 0.005 285);
+  --foreground: oklch(0.985 0.002 90);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-pulse: var(--pulse);
+  --color-pulse-soft: var(--pulse-soft);
+  --color-pulse-deep: var(--pulse-deep);
+  --color-gold: var(--gold);
+
+  --color-ledger: var(--ledger);
+  --color-ledger-foreground: var(--ledger-foreground);
+  --color-ledger-muted: var(--ledger-muted);
+  --color-ledger-border: var(--ledger-border);
+
+  --color-brand-50: var(--brand-50);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-archivo), var(--font-geist-sans);
+  --font-soul: var(--font-spectral), serif;
+
+  /* fluid display scale — thin type etched into the void */
+  --text-hero: clamp(2.5rem, 1.35rem + 4.5vw, 5.25rem);
+  --text-hero--line-height: 0.96;
+  --text-hero--letter-spacing: -0.03em;
+  --text-display: clamp(2.5rem, 1.5rem + 4.2vw, 4.75rem);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.03em;
+  --text-heading: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
+  --text-heading--line-height: 1.08;
+  --text-heading--letter-spacing: -0.02em;
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.4;
+  --text-eyebrow--letter-spacing: 0.16em;
+
+  --radius-sm: calc(var(--radius) - 6px);
+  --radius-md: calc(var(--radius) - 4px);
+  --radius-lg: calc(var(--radius) - 2px);
+  --radius-xl: var(--radius);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+  --shadow-glow: var(--shadow-glow);
+
+  --ease-out-quart: var(--ease-out-quart);
+  --ease-out-expo: var(--ease-out-expo);
+  --ease-spring: var(--ease-spring);
+
+  --animate-fade-up: fade-up var(--dur-slow) var(--ease-out-expo) both;
+  --animate-fade-in: fade-in var(--dur-slow) var(--ease-out-quart) both;
+  --animate-scale-in: scale-in var(--dur) var(--ease-out-expo) both;
+  --animate-shimmer: shimmer 2.2s linear infinite;
+  --animate-pulse-ring: pulse-ring 2.4s var(--ease-out-quart) infinite;
+  --animate-heartbeat: heartbeat 1.4s var(--ease-out-quart) infinite;
+  --animate-marquee: marquee 36s linear infinite;
+  --animate-accordion-down: accordion-down 0.2s var(--ease-out-quart);
+  --animate-accordion-up: accordion-up 0.2s var(--ease-out-quart);
+}
+
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 oklch(0.62 0.245 26 / 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px oklch(0.62 0.245 26 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 oklch(0.62 0.245 26 / 0);
+  }
+}
+/* The vital sign: a double-tap systole/diastole, not a sine wave. */
+@keyframes heartbeat {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  14% {
+    transform: scale(1.28);
+    opacity: 1;
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.18);
+  }
+  56% {
+    transform: scale(1);
+  }
+}
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+@keyframes ekg-draw {
+  from {
+    stroke-dashoffset: var(--ekg-length, 1200);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-tap-highlight-color: transparent;
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+    text-rendering: optimizeLegibility;
+  }
+  ::selection {
+    background: oklch(0.62 0.245 26 / 0.35);
+    color: oklch(0.99 0.005 90);
+  }
+  :focus-visible {
+    @apply outline-none ring-2 ring-ring ring-offset-2 ring-offset-background;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* Cryptographic data is always mono + tabular */
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .measure {
+    max-width: 64ch;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .font-display {
+    font-family: var(--font-display);
+  }
+  /* The signature: ultra-thin, slightly wide, etched into the void. */
+  .type-etched {
+    font-family: var(--font-display);
+    font-weight: 220;
+    font-stretch: 108%;
+  }
+  .font-soul {
+    font-family: var(--font-soul);
+    font-style: italic;
+  }
+  /* Mono kicker — [ 01 / OWN IT ] */
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-eyebrow);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .skip-link {
+    @apply -top-16 pointer-events-none fixed left-2 z-[100] rounded-md bg-primary px-4 py-2 text-primary-foreground text-sm transition-[top];
+  }
+  .skip-link:focus {
+    @apply pointer-events-auto top-2;
+  }
+
+  /* Faint red breath rising from the void — replaces the old aurora. */
+  .bg-aurora {
+    background:
+      radial-gradient(
+        55% 48% at 50% 115%,
+        oklch(0.47 0.19 27 / 0.2),
+        transparent 70%
+      ),
+      radial-gradient(
+        40% 35% at 85% -10%,
+        oklch(0.62 0.245 26 / 0.07),
+        transparent 70%
+      );
+  }
+
+  /* Fine grain so the void never reads as flat plastic */
+  .bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+  }
+
+  /* The ONLY glow in the system — the pulse. ≤ 2 per page. */
+  .glow-pulse,
+  .glow-brand {
+    box-shadow: var(--shadow-glow);
+  }
+
+  .rule {
+    @apply border-border border-t;
+  }
+
+  /* Inverted "ledger" surface — paper receipt against the cosmos */
+  .ledger {
+    background: var(--ledger);
+    color: var(--ledger-foreground);
+  }
+  .ledger ::selection {
+    background: oklch(0.62 0.245 26 / 0.25);
+    color: var(--ledger-foreground);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: var(--animate-fade-up);
+  }
+  .animate-fade-in {
+    animation: var(--animate-fade-in);
+  }
+  .animate-scale-in {
+    animation: var(--animate-scale-in);
+  }
+  .animate-heartbeat {
+    animation: var(--animate-heartbeat);
+  }
+  .animate-marquee {
+    animation: var(--animate-marquee);
+  }
+  /* Staggered reveals: set --i on children */
+  .stagger > * {
+    animation-delay: calc(var(--i, 0) * 60ms);
+  }
+  .text-eyebrow {
+    font-size: var(--text-eyebrow);
+    line-height: var(--text-eyebrow--line-height);
+    letter-spacing: var(--text-eyebrow--letter-spacing);
+  }
+}

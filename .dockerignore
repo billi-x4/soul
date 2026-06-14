@@ -1,0 +1,22 @@
+# Keep the Docker build context lean (the API image copies the whole workspace).
+node_modules
+**/node_modules
+.git
+.next
+**/.next
+out
+**/out
+.turbo
+**/.turbo
+*.log
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+.claude
+.specify
+.cursor
+.agents
+specs
+docs

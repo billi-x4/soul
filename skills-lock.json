@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "walrus-sites": {
+      "source": "mystenlabs/skills",
+      "sourceType": "github",
+      "skillPath": "walrus-sites/SKILL.md",
+      "computedHash": "44d9f97ae33222143b910e4efa78aebcb99a7727b69383d519c0f1f41cd81caa"
+    }
+  }
+}

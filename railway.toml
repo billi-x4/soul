@@ -1,0 +1,42 @@
+# Railway config for the Soul API (centralized fallback; primary frontend hosting is Walrus Sites).
+#
+# Setup: Railway dashboard → New Project → Deploy from GitHub repo → leave Root Directory at the
+# repo root (this file + the Docker build context live there). Build/runtime come from
+# apps/api/Dockerfile; environment VARIABLES are set in the Railway dashboard (Railway config
+# files intentionally don't carry secrets) — the required contract is documented below.
+#
+# NODE_ENV=production is baked into the Dockerfile (LOAD-BEARING: disables dev-login, refuses
+# mock adapters at boot, hides error internals). Railway injects PORT automatically.
+#
+# ---- Required variables (set in the Railway dashboard) ----
+#   DATABASE_URL              Postgres (run `pnpm db:migrate` against it before first boot)
+#   ENOKI_SECRET_KEY          Enoki zkLogin server key
+#   ENOKI_PUBLIC_KEY          Enoki public key
+#   SECRET_ENCRYPTION_KEY     at-rest delegate-key custody master key (required in production)
+#   SESSION_SIGNING_KEY       dedicated session-signing secret (rotate sessions w/o re-keying custody)
+#   SOUL_LIVE                 "true" — live adapters on (boot fails closed if creds are missing)
+#   SUI_NETWORK               "testnet" (dev/demo default; "mainnet" at production cutover)
+#   SUI_SERVICE_KEY           funded Sui keypair signing managed on-chain account ops
+#   WALRUS_SIGNER_KEY         funded Walrus signer for raw blob writes
+#   MEMWAL_RELAYER_URL        e.g. https://relayer-staging.memory.walrus.xyz (testnet staging)
+#   MEMWAL_ACCOUNT_REGISTRY   re-verify against the sui-stack SKILL before deploy (beta churn)
+#   WEB_ORIGIN                comma-separated CORS allowlist (Walrus portal + Vercel origins)
+#   API_ORIGIN                public origin of this API (baked into MCP connection configs)
+
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "apps/api/Dockerfile"
+# Only redeploy when the API or its workspace dependencies change (not the web app).
+watchPatterns = [
+  "apps/api/**",
+  "packages/**",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml",
+  "railway.toml",
+]
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5

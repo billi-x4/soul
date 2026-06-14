@@ -1,0 +1,16 @@
+{
+  "name": "@soul/shared",
+  "version": "1.0.0",
+  "description": "Shared domain types and constants for Soul (Namespace, MemoryItem, ConnectedApp, IngestionJob, AuditEntry).",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "keywords": [],
+  "scripts": {
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "@soul/typescript-config": "workspace:*",
+    "@types/node": "^22.17.0",
+    "typescript": "^5.9.2"
+  }
+}
